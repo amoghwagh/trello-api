@@ -1,0 +1,66 @@
+nav {
+  height: 3.5em;
+}
+
+.margin-box {
+  width: 80%;
+  margin: auto;
+  overflow: hidden;
+}
+
+.card-section {
+  margin: 8em auto;
+}
+
+.responsive-image {
+  height: 2em;
+  width: auto;
+}
+
+/* label color */
+.input-field label {
+  color: #ffffff;
+}
+
+/* label underline focus color */
+.input-field input[type="text"]:focus {
+  border-bottom: 1px solid wheat !important;
+  box-shadow: 0 1px 0 0 wheat !important;
+}
+
+/* label focus color */
+.input-field input[type="text"]:focus + label {
+  color: #ffffff !important;
+}
+
+.collection {
+  max-height: 17.5em;
+  max-width: 25em;
+  margin: auto;
+  overflow-y: scroll;
+}
+
+/* change colour of filled in check box */
+.checkbox-blue-grey[type="checkbox"].filled-in:checked
+  + span:not(.lever):after {
+  border: 2px solid #37474f;
+  background-color: #37474f;
+}
+
+.collection-item span {
+  color: #ffffff;
+}
+
+.collection-item {
+  display: flex;
+  justify-content: space-between;
+}
+
+.checklist-collection .collection {
+  overflow: -moz-scrollbars-none;
+}
+
+.checklist-collection .collection::-webkit-scrollbar {
+  width: 0 !important;
+  display: none;
+}
