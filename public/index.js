@@ -49,7 +49,7 @@ function getChecklistIDs(cards) {
 
 function getCheckItems(itemsArray) {
   return new Promise(resolve => {
-    itemsArray = itemsArray.map(item => item.name);
+    itemsArray = itemsArray.map(item => [item.name, item.id]);
     resolve(itemsArray);
   });
 }
@@ -74,13 +74,16 @@ async function getCheckItemNames(checklists, key, token) {
   });
 }
 
-function createCollectionItem(item) {
+function createCollectionItem(items) {
   $(".collection").append(
-    `<li class="collection-item red accent-3"><p> <label class="centre"> <input type="checkbox" class="filled-in checkbox-blue-grey" /> <span>${item}</span></label></p><a class="btn-floating btn-small waves-effect waves-light blue darken-4"><i class="material-icons">clear</i></a></li>`
+    `<li class="collection-item red accent-3"><p> <label class="centre"> <input type="checkbox" class="filled-in checkbox-blue-grey" /> <span>${
+      items[0]
+    }</span></label></p><a class="btn-floating btn-small waves-effect waves-light blue darken-4"><i class="material-icons">clear</i></a></li>`
   );
 }
 
 function createCheckListNames(list) {
+  $(".checklist-collection").append('<ul class="collection"></ul>');
   list.forEach(item => createCollectionItem(item));
 }
 
