@@ -40,8 +40,9 @@ function getCards(listID, key, token) {
 function getChecklistIDs(cards) {
   const checklistIdArray = cards
     .map(card => {
-      return card.idChecklists[0];
+      return card.idChecklists;
     })
+    .flat()
     .filter(ele => (ele !== undefined ? true : false));
 
   return checklistIdArray;
@@ -52,7 +53,8 @@ function getCheckItems(itemsArray) {
     itemsObj = itemsArray.map(item => {
       return {
         name: item.name,
-        id: item.id
+        id: item.id,
+        checklistId: item.idChecklist
       };
     });
     resolve(itemsObj);
@@ -79,7 +81,7 @@ async function getCheckItemNames(checklists, key, token) {
   });
 }
 
-function addCheckboxListener() {
+function addCheckboxListener(cardsInfo) {
   $('.collection input[type="checkbox"]').click(function() {
     if ($(this).is(":checked")) {
       $(this)
@@ -108,14 +110,20 @@ function createCollectionItem(items) {
     `<li class="collection-item red accent-3"><p><label><input type="checkbox" class="filled-in checkbox-blue-grey"/><span>
     </span><p class="item-name"> ${items.name}</p></label></p><a class="btn-floating btn-small waves-effect waves-light blue darken-4"><i class="material-icons">clear</i></a></li>`
   );
+  $(".collection li")
+    .last()
+    .data("id", items.id);
+  $(".collection li")
+    .last()
+    .data("checklist-id", items.checklistId);
 }
 
-function createCheckListNames(list) {
+function createCheckListNames(list, card) {
   $(".checklist-collection").append('<ul class="collection"></ul>');
   list.forEach(item => {
     createCollectionItem(item);
   });
-  addCheckboxListener();
+  addCheckboxListener(card);
   addRemoveListener();
 }
 
@@ -130,7 +138,7 @@ async function getEverything() {
     const cards = await getCards(listID, key, token);
     const checklistIds = await getChecklistIDs(cards);
     const checkItemNames = await getCheckItemNames(checklistIds, key, token);
-    createCheckListNames(checkItemNames);
+    createCheckListNames(checkItemNames, cards);
   } catch (err) {
     console.log(err);
   }
