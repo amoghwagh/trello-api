@@ -81,18 +81,44 @@ async function getCheckItemNames(checklists, key, token) {
   });
 }
 
-function addCheckboxListener(cardsInfo) {
+function addCheckboxListener(cardsInfo, key, token) {
   $('.collection input[type="checkbox"]').click(function() {
+    const checklistId = $(this)
+      .parents("li")
+      .data("checklist-id");
+    const checkItemId = $(this)
+      .parents("li")
+      .data("id");
     if ($(this).is(":checked")) {
       $(this)
         .parents(".collection-item")
         .find(".item-name")
         .css("text-decoration", "line-through");
+      cardsInfo.forEach(eachCard => {
+        if (eachCard.idChecklists.includes(checklistId)) {
+          fetch(
+            `https://api.trello.com/1/cards/${eachCard.id}/checkItem/${checkItemId}?key=${key}&token=${token}&state=complete`,
+            {
+              method: "PUT"
+            }
+          ).catch(error => console.error("Error:", error));
+        }
+      });
     } else if ($(this).is(":not(:checked)")) {
       $(this)
         .parents(".collection-item")
         .find(".item-name")
         .css("text-decoration", "none");
+      cardsInfo.forEach(eachCard => {
+        if (eachCard.idChecklists.includes(checklistId)) {
+          fetch(
+            `https://api.trello.com/1/cards/${eachCard.id}/checkItem/${checkItemId}?key=${key}&token=${token}&state=incomplete`,
+            {
+              method: "PUT"
+            }
+          ).catch(error => console.error("Error:", error));
+        }
+      });
     }
   });
 }
@@ -118,12 +144,12 @@ function createCollectionItem(items) {
     .data("checklist-id", items.checklistId);
 }
 
-function createCheckListNames(list, card) {
+function createCheckListNames(list, card, key, token) {
   $(".checklist-collection").append('<ul class="collection"></ul>');
   list.forEach(item => {
     createCollectionItem(item);
   });
-  addCheckboxListener(card);
+  addCheckboxListener(card, key, token);
   addRemoveListener();
 }
 
@@ -138,7 +164,7 @@ async function getEverything() {
     const cards = await getCards(listID, key, token);
     const checklistIds = await getChecklistIDs(cards);
     const checkItemNames = await getCheckItemNames(checklistIds, key, token);
-    createCheckListNames(checkItemNames, cards);
+    createCheckListNames(checkItemNames, cards, key, token);
   } catch (err) {
     console.log(err);
   }
