@@ -54,7 +54,8 @@ function getCheckItems(itemsArray) {
       return {
         name: item.name,
         id: item.id,
-        checklistId: item.idChecklist
+        checklistId: item.idChecklist,
+        state: item.state
       };
     });
     resolve(itemsObj);
@@ -148,6 +149,14 @@ function createCollectionItem(items) {
     `<li class="collection-item red accent-3"><p><label><input type="checkbox" class="filled-in checkbox-blue-grey"/><span>
     </span><p class="item-name"> ${items.name}</p></label></p><a class="btn-floating btn-small waves-effect waves-light blue darken-4"><i class="material-icons">clear</i></a></li>`
   );
+  if (items.state == "complete") {
+    $('.collection input[type="checkbox"]')
+      .last()
+      .prop("checked", true);
+    $(".collection .item-name")
+      .last()
+      .css("text-decoration", "line-through");
+  }
   $(".collection li")
     .last()
     .data("id", items.id);
