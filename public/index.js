@@ -49,8 +49,13 @@ function getChecklistIDs(cards) {
 
 function getCheckItems(itemsArray) {
   return new Promise(resolve => {
-    itemsArray = itemsArray.map(item => [item.name, item.id]);
-    resolve(itemsArray);
+    itemsObj = itemsArray.map(item => {
+      return {
+        name: item.name,
+        id: item.id
+      };
+    });
+    resolve(itemsObj);
   });
 }
 
@@ -69,22 +74,40 @@ async function getCheckItemNames(checklists, key, token) {
   });
   const checkItems = new Array();
   return Promise.all(checkItemPromises).then(async data => {
-    const checkItemNames = await getCheckItems(data.flat());
-    return checkItemNames;
+    const checkItemNamesObj = await getCheckItems(data.flat());
+    return checkItemNamesObj;
+  });
+}
+
+function addCheckboxListener() {
+  $('input[type="checkbox"]').click(function() {
+    if ($(this).is(":checked")) {
+      $(this)
+        .parents(".collection-item")
+        .find(".item-name")
+        .css("text-decoration", "line-through");
+    } else if ($(this).is(":not(:checked)")) {
+      $(this)
+        .parents(".collection-item")
+        .find(".item-name")
+        .css("text-decoration", "none");
+    }
   });
 }
 
 function createCollectionItem(items) {
   $(".collection").append(
-    `<li class="collection-item red accent-3"><p> <label class="centre"> <input type="checkbox" class="filled-in checkbox-blue-grey" /> <span>${
-      items[0]
-    }</span></label></p><a class="btn-floating btn-small waves-effect waves-light blue darken-4"><i class="material-icons">clear</i></a></li>`
+    `<li class="collection-item red accent-3"><p><label><input type="checkbox" class="filled-in checkbox-blue-grey"/><span>
+    </span><p class="item-name"> ${items.name}</p></label></p><a class="btn-floating btn-small waves-effect waves-light blue darken-4"><i class="material-icons">clear</i></a></li>`
   );
 }
 
 function createCheckListNames(list) {
   $(".checklist-collection").append('<ul class="collection"></ul>');
-  list.forEach(item => createCollectionItem(item));
+  list.forEach(item => {
+    createCollectionItem(item);
+  });
+  addCheckboxListener();
 }
 
 async function getEverything() {
