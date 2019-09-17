@@ -80,7 +80,7 @@ async function getCheckItemNames(checklists, key, token) {
 }
 
 function addCheckboxListener() {
-  $('input[type="checkbox"]').click(function() {
+  $('.collection input[type="checkbox"]').click(function() {
     if ($(this).is(":checked")) {
       $(this)
         .parents(".collection-item")
@@ -92,6 +92,14 @@ function addCheckboxListener() {
         .find(".item-name")
         .css("text-decoration", "none");
     }
+  });
+}
+
+function addRemoveListener() {
+  $(".collection .btn-floating").on("click", event => {
+    $(event.currentTarget)
+      .parent()
+      .remove();
   });
 }
 
@@ -108,6 +116,7 @@ function createCheckListNames(list) {
     createCollectionItem(item);
   });
   addCheckboxListener();
+  addRemoveListener();
 }
 
 async function getEverything() {
