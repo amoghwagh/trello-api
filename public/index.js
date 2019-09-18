@@ -172,6 +172,7 @@ function createCollectionItem(items) {
 }
 
 function createCheckListNames(list, card, key, token) {
+  $(".checklist-collection .preloader-wrapper").remove();
   $(".checklist-collection").append('<ul class="collection"></ul>');
   list.forEach(item => {
     createCollectionItem(item);
