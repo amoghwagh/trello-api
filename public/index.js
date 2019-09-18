@@ -130,23 +130,27 @@ function addCheckboxListener(cardsInfo, key, token) {
   });
 }
 
+function removeItemThroughApi(currentElement, key, token) {
+  const checklistId = $(currentElement)
+    .parents("li")
+    .data("checklist-id");
+  const checkItemId = $(currentElement)
+    .parents("li")
+    .data("id");
+  fetch(
+    `https://api.trello.com/1/checklists/${checklistId}/checkItems/${checkItemId}?key=${key}&token=${token}`,
+    {
+      method: "DELETE"
+    }
+  ).catch(error => console.error("Error:", error));
+}
+
 function addRemoveListener(key, token) {
   $(".collection .btn-floating").on("click", event => {
-    const checklistId = $(event.currentTarget)
-      .parents("li")
-      .data("checklist-id");
-    const checkItemId = $(event.currentTarget)
-      .parents("li")
-      .data("id");
+    removeItemThroughApi(event.currentTarget, key, token);
     $(event.currentTarget)
       .parent()
       .remove();
-    fetch(
-      `https://api.trello.com/1/checklists/${checklistId}/checkItems/${checkItemId}?key=${key}&token=${token}`,
-      {
-        method: "DELETE"
-      }
-    ).catch(error => console.error("Error:", error));
   });
 }
 
