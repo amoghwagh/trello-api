@@ -235,10 +235,32 @@ function createCheckListNames(list, card, key, token) {
   addRemoveListener(key, token);
 }
 
-function addTextboxListener() {
+function updateParaName(para, value) {
+  $(para).text(value);
+  $(para).css("display", "inline");
+}
+
+function updateItemName(para, textInput) {
+  $(textInput).on("keyup change", event => {
+    if (event.which === 13) {
+      const value = textInput.val();
+      if (value !== "") {
+        updateParaName(para, value);
+        $(textInput)
+          .parent()
+          .css("display", "none");
+        $(para).css("display", "inline");
+      }
+    }
+  });
+}
+
+function addTextboxListener(cards, key, token) {
   $(".collection .item-name").on("click", event => {
     const textarea = $(event.currentTarget).siblings(".textarea-section");
-    $(textarea).css("display", "unset");
+    const textareaInput = $(textarea).children(".item-name-textarea");
+
+    $(textarea).css("display", "inline");
     $(textarea)
       .children(".item-name-textarea")
       .attr("value", $(event.currentTarget).text());
@@ -246,15 +268,16 @@ function addTextboxListener() {
       .children(".item-name-textarea")
       .focus();
     $(event.currentTarget).css("display", "none");
+    updateItemName(event.currentTarget, textareaInput);
     // When textbox Loses Focus
     $(textarea).focusout(() => {
       $(textarea).css("display", "none");
-      $(event.currentTarget).css("display", "unset");
+      $(event.currentTarget).css("display", "inline");
     });
   });
 }
 function updateCheckListNames(cards, key, token) {
-  addTextboxListener();
+  addTextboxListener(cards, key, token);
 }
 
 async function getEverything() {
