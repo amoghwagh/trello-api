@@ -180,6 +180,46 @@ function createCheckListNames(list, card, key, token) {
   addRemoveListener(key, token);
 }
 
+function createNewItemThroughApi(newItemObj, key, token) {
+  return fetch(
+    `https://api.trello.com/1/checklists/${newItemObj.checklistId}/checkItems?name=${newItemObj.name}&pos=bottom&checked=false&key=${key}&token=${token}`,
+    {
+      method: "POST"
+    }
+  )
+    .then(res => res.json())
+    .then(response => response.id)
+    .catch(error => console.error("Error:", error));
+}
+
+async function createNewItem(card, newItem, key, token) {
+  const newItemObj = {
+    name: newItem,
+    state: "incomplete",
+    checklistId: "5d81d3e72855295cc63dc4e6"
+  };
+  const itemId = await createNewItemThroughApi(newItemObj, key, token);
+  newItemObj.id = itemId;
+  createCollectionItem(newItemObj);
+  addCheckboxListener(card, key, token);
+  addRemoveListener(key, token);
+}
+
+function addCheckItem(cards, key, token) {
+  const inputField = $(".todo-card").find(".addCheckItem");
+  let value = "";
+  inputField.parents("form").submit(event => event.preventDefault());
+  inputField.on("click", () => {
+    inputField.val("");
+  });
+  inputField.on("keyup change", event => {
+    if (event.which === 13) {
+      value = inputField.val();
+      createNewItem(cards, value, key, token);
+    }
+  });
+}
+
 async function getEverything() {
   const key = "4a0d830d67c1acd2c6e927bc368469e9";
   const token =
@@ -191,7 +231,7 @@ async function getEverything() {
     const cards = await getCards(listID, key, token);
     const checklistIds = await getChecklistIDs(cards);
     const checkItemNames = await getCheckItemNames(checklistIds, key, token);
-
+    addCheckItem(cards, key, token);
     createCheckListNames(checkItemNames, cards, key, token);
   } catch (err) {
     console.log(err);
