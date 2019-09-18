@@ -45,6 +45,15 @@ nav {
   border: none;
 }
 
+.checklist-collection .collection {
+  overflow: -moz-scrollbars-none;
+}
+
+.checklist-collection .collection::-webkit-scrollbar {
+  width: 0 !important;
+  display: none;
+}
+
 /* change colour of filled in check box */
 .checkbox-blue-grey[type="checkbox"].filled-in:checked
   + span:not(.lever):after {
@@ -59,13 +68,4 @@ nav {
 .collection-item {
   display: flex;
   justify-content: space-between;
-}
-
-.checklist-collection .collection {
-  overflow: -moz-scrollbars-none;
-}
-
-.checklist-collection .collection::-webkit-scrollbar {
-  width: 0 !important;
-  display: none;
 }

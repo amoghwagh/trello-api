@@ -217,6 +217,7 @@ function addCheckItem(cards, key, token) {
       if (value !== "") {
         createNewItem(cards, value, key, token);
         $(".collection").animate({ scrollTop: 9999 }, 1500);
+        inputField.val("");
       }
     }
   });
