@@ -200,6 +200,7 @@ async function createNewItem(card, newItem, key, token) {
   createCollectionItem(newItemObj);
   addCheckboxListener(card, key, token);
   addRemoveListener(key, token);
+  addTextboxListener(card, key, token);
 }
 
 function addCheckItem(cards, key, token) {
@@ -223,16 +224,6 @@ function addCheckItem(cards, key, token) {
       }
     }
   });
-}
-
-function createCheckListNames(list, card, key, token) {
-  $(".checklist-collection .preloader-wrapper").remove();
-  $(".checklist-collection").append('<ul class="collection hoverable"></ul>');
-  list.forEach(item => {
-    createCollectionItem(item);
-  });
-  addCheckboxListener(card, key, token);
-  addRemoveListener(key, token);
 }
 
 function updateParaName(para, value) {
@@ -297,6 +288,17 @@ function addTextboxListener(cards, key, token) {
 }
 function updateCheckListNames(cards, key, token) {
   addTextboxListener(cards, key, token);
+}
+
+function createCheckListNames(list, card, key, token) {
+  $(".checklist-collection .preloader-wrapper").remove();
+  $(".checklist-collection").append('<ul class="collection hoverable"></ul>');
+  list.forEach(item => {
+    createCollectionItem(item);
+  });
+  addCheckboxListener(card, key, token);
+  addRemoveListener(key, token);
+  addTextboxListener(card, key, token);
 }
 
 async function getEverything() {
