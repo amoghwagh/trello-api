@@ -210,11 +210,10 @@ function addCheckItem(cards, key, token) {
   inputField.on("keyup change", event => {
     if (event.which === 13) {
       value = inputField.val();
-      createNewItem(cards, value, key, token);
-      $(".collection").animate(
-        { scrollTop: $(".collection").height() },
-        "slow"
-      );
+      if (value !== "") {
+        createNewItem(cards, value, key, token);
+        $(".collection").animate({ scrollTop: 9999 }, 1500);
+      }
     }
   });
 }
