@@ -45,6 +45,15 @@ nav {
   border: none;
 }
 
+.collection .item-name-textarea {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  background-color: #ff1744;
+  color: white;
+  border-style: none;
+  border: 0;
+  outline: none;
+}
+
 .checklist-collection .collection {
   overflow: -moz-scrollbars-none;
 }

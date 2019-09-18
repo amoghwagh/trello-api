@@ -246,6 +246,7 @@ function addTextboxListener() {
       .children(".item-name-textarea")
       .focus();
     $(event.currentTarget).css("display", "none");
+    // When textbox Loses Focus
     $(textarea).focusout(() => {
       $(textarea).css("display", "none");
       $(event.currentTarget).css("display", "unset");
