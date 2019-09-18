@@ -39,7 +39,7 @@ nav {
 
 .collection {
   max-height: 17.5em;
-  max-width: 25em;
+  max-width: 23.5em;
   margin: auto;
   overflow-y: scroll;
   border: none;
@@ -68,4 +68,9 @@ nav {
 .collection-item {
   display: flex;
   justify-content: space-between;
+}
+
+#item-name-textbox {
+  display: inline;
+  width: 1.5em;
 }
