@@ -158,8 +158,8 @@ function createCollectionItem(items) {
   $(".collection").append(
     `<li class="collection-item hoverable red accent-3"><p><label><input type="checkbox" class="filled-in checkbox-blue-grey"/><span>
     </span><div class="textarea-section inline" style="display:none" >
-    <input value="LOL" type="materialize-textarea" class="item-name-textarea"/>
-    </div><p class="item-name"> ${items.name}</p></label></p><a class="btn-floating btn-small waves-effect waves-light blue darken-4"><i class="material-icons">clear</i></a></li>`
+    <input type="materialize-textarea" class="item-name-textarea"/>
+    </div><p class="item-name">${items.name}</p></label></p><a class="btn-floating btn-small waves-effect waves-light blue darken-4"><i class="material-icons">clear</i></a></li>`
   );
   if (items.state == "complete") {
     $('.collection input[type="checkbox"]')
@@ -236,7 +236,21 @@ function createCheckListNames(list, card, key, token) {
 }
 
 function addTextboxListener() {
-  $("");
+  $(".collection .item-name").on("click", event => {
+    const textarea = $(event.currentTarget).siblings(".textarea-section");
+    $(textarea).css("display", "unset");
+    $(textarea)
+      .children(".item-name-textarea")
+      .attr("value", $(event.currentTarget).text());
+    $(textarea)
+      .children(".item-name-textarea")
+      .focus();
+    $(event.currentTarget).css("display", "none");
+    $(textarea).focusout(() => {
+      $(textarea).css("display", "none");
+      $(event.currentTarget).css("display", "unset");
+    });
+  });
 }
 function updateCheckListNames(cards, key, token) {
   addTextboxListener();
