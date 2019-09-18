@@ -152,7 +152,7 @@ function addRemoveListener(key, token) {
 
 function createCollectionItem(items) {
   $(".collection").append(
-    `<li class="collection-item red accent-3"><p><label><input type="checkbox" class="filled-in checkbox-blue-grey"/><span>
+    `<li class="collection-item hoverable red accent-3"><p><label><input type="checkbox" class="filled-in checkbox-blue-grey"/><span>
     </span><p class="item-name"> ${items.name}</p></label></p><a class="btn-floating btn-small waves-effect waves-light blue darken-4"><i class="material-icons">clear</i></a></li>`
   );
   if (items.state == "complete") {
@@ -169,16 +169,6 @@ function createCollectionItem(items) {
   $(".collection li")
     .last()
     .data("checklist-id", items.checklistId);
-}
-
-function createCheckListNames(list, card, key, token) {
-  $(".checklist-collection .preloader-wrapper").remove();
-  $(".checklist-collection").append('<ul class="collection"></ul>');
-  list.forEach(item => {
-    createCollectionItem(item);
-  });
-  addCheckboxListener(card, key, token);
-  addRemoveListener(key, token);
 }
 
 function createNewItemThroughApi(newItemObj, key, token) {
@@ -213,12 +203,30 @@ function addCheckItem(cards, key, token) {
   inputField.on("click", () => {
     inputField.val("");
   });
+  inputField.focusout(() => {
+    inputField.val("");
+    inputField.siblings("label").removeClass("active");
+  });
   inputField.on("keyup change", event => {
     if (event.which === 13) {
       value = inputField.val();
       createNewItem(cards, value, key, token);
+      $(".collection").animate(
+        { scrollTop: $(".collection").height() },
+        "slow"
+      );
     }
   });
+}
+
+function createCheckListNames(list, card, key, token) {
+  $(".checklist-collection .preloader-wrapper").remove();
+  $(".checklist-collection").append('<ul class="collection hoverable"></ul>');
+  list.forEach(item => {
+    createCollectionItem(item);
+  });
+  addCheckboxListener(card, key, token);
+  addRemoveListener(key, token);
 }
 
 async function getEverything() {

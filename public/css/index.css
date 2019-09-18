@@ -1,3 +1,7 @@
+html {
+  background-image: url("https://images.unsplash.com/photo-1496630345921-2e3abebbfdde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1868&q=80");
+}
+
 nav {
   height: 3.5em;
 }
@@ -38,6 +42,7 @@ nav {
   max-width: 25em;
   margin: auto;
   overflow-y: scroll;
+  border: none;
 }
 
 /* change colour of filled in check box */
