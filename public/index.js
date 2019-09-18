@@ -240,16 +240,35 @@ function updateParaName(para, value) {
   $(para).css("display", "inline");
 }
 
-function updateItemName(para, textInput) {
+function updateNameThroughApi(value, para, cardsInfo, key, token) {
+  const checklistId = $(para)
+    .parents("li")
+    .data("checklist-id");
+  const checkItemId = $(para)
+    .parents("li")
+    .data("id");
+  cardsInfo.forEach(eachCard => {
+    if (eachCard.idChecklists.includes(checklistId)) {
+      fetch(
+        `https://api.trello.com/1/cards/${eachCard.id}/checkItem/${checkItemId}?key=${key}&token=${token}&name=${value}`,
+        {
+          method: "PUT"
+        }
+      ).catch(error => console.error("Error:", error));
+    }
+  });
+}
+
+function updateItemName(para, textInput, cards, key, token) {
   $(textInput).on("keyup change", event => {
     if (event.which === 13) {
       const value = textInput.val();
       if (value !== "") {
         updateParaName(para, value);
+        updateNameThroughApi(value, para, cards, key, token);
         $(textInput)
           .parent()
           .css("display", "none");
-        $(para).css("display", "inline");
       }
     }
   });
@@ -268,7 +287,7 @@ function addTextboxListener(cards, key, token) {
       .children(".item-name-textarea")
       .focus();
     $(event.currentTarget).css("display", "none");
-    updateItemName(event.currentTarget, textareaInput);
+    updateItemName(event.currentTarget, textareaInput, cards, key, token);
     // When textbox Loses Focus
     $(textarea).focusout(() => {
       $(textarea).css("display", "none");
