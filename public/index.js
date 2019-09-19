@@ -1,40 +1,37 @@
-function getBoardID(boardID, key, token) {
-  return fetch(
-    `https://api.trello.com/1/boards/${boardID}?fields=name,url&key=${key}&token=${token}`
-  )
-    .then(response => {
-      return response.json();
-    })
-    .then(myJson => {
-      return myJson.id;
-    })
-    .catch(err => err);
+async function getBoardID(boardID, key, token) {
+  try {
+    const fetchCall = await fetch(
+      `https://api.trello.com/1/boards/${boardID}?fields=name,url&key=${key}&token=${token}`
+    );
+    const jsonRetrieved = await fetchCall.json();
+    return jsonRetrieved.id;
+  } catch (err) {
+    alert("Failed to retrieve board...");
+  }
 }
 
-function getListID(boardID, key, token) {
-  return fetch(
-    `https://api.trello.com/1/boards/${boardID}/lists?cards=none&card_fields=all&filter=open&fields=all&key=${key}&token=${token}`
-  )
-    .then(response => {
-      return response.json();
-    })
-    .then(myJson => {
-      return myJson[0].id;
-    })
-    .catch(err => err);
+async function getListID(boardID, key, token) {
+  try {
+    const fetchCall = await fetch(
+      `https://api.trello.com/1/boards/${boardID}/lists?cards=none&card_fields=all&filter=open&fields=all&key=${key}&token=${token}`
+    );
+    const jsonRetrieved = await fetchCall.json();
+    return jsonRetrieved[0].id;
+  } catch (err) {
+    alert("Failed to retrieve List...");
+  }
 }
 
-function getCards(listID, key, token) {
-  return fetch(
-    `https://api.trello.com/1/lists/${listID}/cards?key=${key}&token=${token}`
-  )
-    .then(response => {
-      return response.json();
-    })
-    .then(myJson => {
-      return myJson;
-    })
-    .catch(err => err);
+async function getCards(listID, key, token) {
+  try {
+    const fetchCall = await fetch(
+      `https://api.trello.com/1/lists/${listID}/cards?key=${key}&token=${token}`
+    );
+    const jsonRetrieved = await fetchCall.json();
+    return jsonRetrieved;
+  } catch (err) {
+    alert("Failed to retrieve cards...");
+  }
 }
 
 function getChecklistIDs(cards) {
@@ -49,37 +46,31 @@ function getChecklistIDs(cards) {
 }
 
 function getCheckItems(itemsArray) {
-  return new Promise(resolve => {
-    itemsObj = itemsArray.map(item => {
-      return {
-        name: item.name,
-        id: item.id,
-        checklistId: item.idChecklist,
-        state: item.state
-      };
-    });
-    resolve(itemsObj);
+  return itemsArray.map(item => {
+    return {
+      name: item.name,
+      id: item.id,
+      checklistId: item.idChecklist,
+      state: item.state
+    };
   });
 }
 
 async function getCheckItemNames(checklists, key, token) {
-  const checkItemPromises = checklists.map(checklist => {
-    return fetch(
-      `https://api.trello.com/1/checklists/${checklist}?key=${key}&token=${token}`
-    )
-      .then(response => {
-        return response.json();
-      })
-      .then(myJson => {
-        return myJson.checkItems;
-      })
-      .catch(err => err);
-  });
-  const checkItems = new Array();
-  return Promise.all(checkItemPromises).then(async data => {
-    const checkItemNamesObj = await getCheckItems(data.flat());
+  try {
+    const checkItemPromises = checklists.map(checklist => {
+      const fetchCall = await fetch(
+        `https://api.trello.com/1/checklists/${checklist}?key=${key}&token=${token}`
+      );
+      const json = await fetchCall.json();
+      return json.checkItems;
+    });
+    const checkItemData = await Promise.all(checkItemPromises);
+    const checkItemNamesObj = await getCheckItems(checkItemData.flat());
     return checkItemNamesObj;
-  });
+  } catch (err) {
+    console.log("Failed to retrieve check items");
+  }
 }
 
 function checkThroughApi(currentItem, cardsInfo, key, token) {
@@ -161,6 +152,7 @@ function createCollectionItem(items) {
     <input type="materialize-textarea" class="item-name-textarea"/>
     </div><p class="item-name">${items.name}</p></label></p><a class="btn-floating btn-small waves-effect waves-light blue darken-4"><i class="material-icons">clear</i></a></li>`
   );
+
   if (items.state == "complete") {
     $('.collection input[type="checkbox"]')
       .last()
@@ -169,9 +161,11 @@ function createCollectionItem(items) {
       .last()
       .css("text-decoration", "line-through");
   }
+
   $(".collection li")
     .last()
     .data("id", items.id);
+
   $(".collection li")
     .last()
     .data("checklist-id", items.checklistId);
@@ -286,9 +280,6 @@ function addTextboxListener(cards, key, token) {
     });
   });
 }
-function updateCheckListNames(cards, key, token) {
-  addTextboxListener(cards, key, token);
-}
 
 function createCheckListNames(list, card, key, token) {
   $(".checklist-collection .preloader-wrapper").remove();
@@ -314,9 +305,9 @@ async function getEverything() {
     const checkItemNames = await getCheckItemNames(checklistIds, key, token);
     addCheckItem(cards, key, token);
     createCheckListNames(checkItemNames, cards, key, token);
-    updateCheckListNames(cards, key, token);
+    addTextboxListener(cards, key, token);
   } catch (err) {
-    console.log(err);
+    alert(err);
   }
 }
 
