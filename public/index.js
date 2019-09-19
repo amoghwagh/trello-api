@@ -173,7 +173,7 @@ function createCollectionItem(item) {
 async function createNewItemThroughApi(newItemObj, key, token) {
   try {
     const fetchCall = await fetch(
-      `httpss://api.trello.com/1/checklists/${newItemObj.checklistId}/checkItems?name=${newItemObj.name}&pos=bottom&checked=false&key=${key}&token=${token}`,
+      `https://api.trello.com/1/checklists/${newItemObj.checklistId}/checkItems?name=${newItemObj.name}&pos=bottom&checked=false&key=${key}&token=${token}`,
       {
         method: "POST"
       }
