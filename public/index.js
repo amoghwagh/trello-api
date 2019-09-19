@@ -139,7 +139,7 @@ async function removeItemThroughApi(currentElement, key, token) {
   }
 }
 
-function addRemoveListener(key, token) {
+function activateRemoveListener(key, token) {
   $(".collection .btn-floating").on("click", event => {
     removeItemThroughApi(event.currentTarget, key, token);
   });
@@ -192,7 +192,7 @@ async function createNewItem(card, newItem, key, token) {
   newItemObj.id = itemId;
   createCollectionItem(newItemObj);
   addCheckboxListener(card, key, token);
-  addRemoveListener(key, token);
+  activateRemoveListener(key, token);
   addTextboxListener(card, key, token);
 }
 
@@ -287,7 +287,7 @@ function createCheckListNames(list, card, key, token) {
     createCollectionItem(item);
   });
   addCheckboxListener(card, key, token);
-  addRemoveListener(key, token);
+  activateRemoveListener(key, token);
   addTextboxListener(card, key, token);
 }
 
