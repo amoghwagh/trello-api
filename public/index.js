@@ -170,30 +170,42 @@ function createCollectionItem(item) {
   $(collectionItem).data("state", item.state);
 }
 
-function createNewItemThroughApi(newItemObj, key, token) {
-  return fetch(
-    `https://api.trello.com/1/checklists/${newItemObj.checklistId}/checkItems?name=${newItemObj.name}&pos=bottom&checked=false&key=${key}&token=${token}`,
-    {
-      method: "POST"
-    }
-  )
-    .then(res => res.json())
-    .then(response => response.id)
-    .catch(error => console.error("Error:", error));
+async function createNewItemThroughApi(newItemObj, key, token) {
+  try {
+    const fetchCall = await fetch(
+      `httpss://api.trello.com/1/checklists/${newItemObj.checklistId}/checkItems?name=${newItemObj.name}&pos=bottom&checked=false&key=${key}&token=${token}`,
+      {
+        method: "POST"
+      }
+    );
+    const json = await fetchCall.json();
+    const itemId = json.id;
+    return itemId;
+  } catch (err) {
+    alert("Failed to do the operation. Please check if you are online.");
+    const itemId = "Error";
+    return itemId;
+  }
 }
 
 async function createNewItem(card, newItem, key, token) {
-  const newItemObj = {
-    name: newItem,
-    state: "incomplete",
-    checklistId: "5d81d3e72855295cc63dc4e6"
-  };
-  const itemId = await createNewItemThroughApi(newItemObj, key, token);
-  newItemObj.id = itemId;
-  createCollectionItem(newItemObj);
-  addCheckboxListener(card, key, token);
-  activateRemoveListener(key, token);
-  addTextboxListener(card, key, token);
+  try {
+    const newItemObj = {
+      name: newItem,
+      state: "incomplete",
+      checklistId: "5d81d3e72855295cc63dc4e6"
+    };
+    const itemId = await createNewItemThroughApi(newItemObj, key, token);
+    if (itemId !== "Error") {
+      newItemObj.id = itemId;
+      createCollectionItem(newItemObj);
+      addCheckboxListener(card, key, token);
+      activateRemoveListener(key, token);
+      addTextboxListener(card, key, token);
+    } else throw err;
+  } catch (err) {
+    return err;
+  }
 }
 
 function addCheckItem(cards, key, token) {
