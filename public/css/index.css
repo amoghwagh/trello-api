@@ -90,3 +90,7 @@ nav {
 .addInline {
   display: inline;
 }
+
+.addHidden {
+  display: none;
+}

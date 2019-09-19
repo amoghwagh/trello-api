@@ -147,7 +147,7 @@ function activateRemoveListener(key, token) {
 
 function createCollectionItem(item) {
   let htmlString = `<li class="collection-item hoverable red accent-3"><p><label><input type="checkbox" class="filled-in checkbox-blue-grey"/><span>
-  </span><div class="textarea-section inline" style="display:none" >
+  </span><div class="textarea-section inline addHidden">
   <input type="materialize-textarea" class="item-name-textarea"/>
   </div><p class="item-name">${item.name}</p></label></p><a class="btn-floating btn-small waves-effect waves-light blue darken-4"><i class="material-icons">clear</i></a></li>`;
 
@@ -240,14 +240,19 @@ function updateNameThroughApi(value, para, cardsInfo, key, token) {
   const checklistData = $(para)
     .parents("li")
     .data();
-  cardsInfo.forEach(eachCard => {
+  cardsInfo.forEach(async eachCard => {
     if (eachCard.idChecklists.includes(checklistData.checklistId)) {
-      fetch(
-        `https://api.trello.com/1/cards/${eachCard.id}/checkItem/${checklistData.id}?key=${key}&token=${token}&name=${value}`,
-        {
-          method: "PUT"
-        }
-      ).catch(error => console.error("Error:", error));
+      try {
+        await fetch(
+          `https://api.trello.com/1/cards/${eachCard.id}/checkItem/${checklistData.id}?key=${key}&token=${token}&name=${value}`,
+          {
+            method: "PUT"
+          }
+        );
+      } catch (error) {
+        alert("Failed to do the operation. Please check if you are online.");
+        return error;
+      }
     }
   });
 }
@@ -272,19 +277,22 @@ function addTextboxListener(cards, key, token) {
     const textarea = $(event.currentTarget).siblings(".textarea-section");
     const textareaInput = $(textarea).children(".item-name-textarea");
 
-    $(textarea).css("display", "inline");
+    $(textarea).removeClass("addHidden");
+    $(textarea).addClass("addInline");
     $(textarea)
       .children(".item-name-textarea")
       .attr("value", $(event.currentTarget).text());
     $(textarea)
       .children(".item-name-textarea")
       .focus();
-    $(event.currentTarget).css("display", "none");
+    $(event.currentTarget).addClass("addHidden");
     updateItemName(event.currentTarget, textareaInput, cards, key, token);
     // When textbox Loses Focus
     $(textarea).focusout(() => {
-      $(textarea).css("display", "none");
-      $(event.currentTarget).css("display", "inline");
+      $(textarea).addClass("addHidden");
+      $(textarea).removeClass("addInline");
+      $(event.currentTarget).addClass("addInline");
+      $(event.currentTarget).removeClass("addHidden");
     });
   });
 }
