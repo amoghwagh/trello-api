@@ -245,7 +245,7 @@ function updateNameThroughApi(value, para, cardsInfo, key, token, textInput) {
     if (eachCard.idChecklists.includes(checklistData.checklistId)) {
       try {
         await fetch(
-          `httpss://api.trello.com/1/cards/${eachCard.id}/checkItem/${checklistData.id}?key=${key}&token=${token}&name=${value}`,
+          `https://api.trello.com/1/cards/${eachCard.id}/checkItem/${checklistData.id}?key=${key}&token=${token}&name=${value}`,
           {
             method: "PUT"
           }
