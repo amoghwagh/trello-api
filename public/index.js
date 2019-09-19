@@ -96,8 +96,16 @@ function checkOrUncheckThroughApi(currentItem, cardsInfo, key, token) {
         alert("Failed to do the operation. Please check if you are online.");
         if (currentItem.is(":checked")) {
           currentItem.prop("checked", false);
+          currentItem
+            .parents(".collection-item")
+            .find(".item-name")
+            .toggleClass("strike");
         } else {
           currentItem.prop("checked", true);
+          currentItem
+            .parents(".collection-item")
+            .find(".item-name")
+            .toggleClass("strike");
         }
         return err;
       }
@@ -301,7 +309,6 @@ function addTextboxListener(cards, key, token) {
       .children(".item-name-textarea")
       .on("keypress", e => {
         if (e.keyCode === 13) {
-          console.log("LOl");
           updateItemName(event.currentTarget, textareaInput, cards, key, token);
         }
       });
