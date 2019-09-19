@@ -237,7 +237,7 @@ function updateParaName(para, value) {
   $(para).removeClass("addHidden");
 }
 
-function updateNameThroughApi(value, para, cardsInfo, key, token) {
+function updateNameThroughApi(value, para, cardsInfo, key, token, textInput) {
   const checklistData = $(para)
     .parents("li")
     .data();
@@ -245,32 +245,38 @@ function updateNameThroughApi(value, para, cardsInfo, key, token) {
     if (eachCard.idChecklists.includes(checklistData.checklistId)) {
       try {
         await fetch(
-          `https://api.trello.com/1/cards/${eachCard.id}/checkItem/${checklistData.id}?key=${key}&token=${token}&name=${value}`,
+          `httpss://api.trello.com/1/cards/${eachCard.id}/checkItem/${checklistData.id}?key=${key}&token=${token}&name=${value}`,
           {
             method: "PUT"
           }
         );
-      } catch (error) {
-        alert("Failed to do the operation. Please check if you are online.");
-        return error;
-      }
-    }
-  });
-}
-
-function updateItemName(para, textInput, cards, key, token) {
-  $(textInput).on("keyup change", event => {
-    if (event.which === 13) {
-      const value = textInput.val();
-      if (value !== "") {
         updateParaName(para, value);
-        updateNameThroughApi(value, para, cards, key, token);
         $(textInput)
           .parent()
           .addClass("addHidden");
         $(textInput)
           .parent()
           .removeClass("addInline");
+      } catch (error) {
+        alert("Failed to do the operation. Please check if you are online.");
+      }
+    }
+  });
+}
+
+function updateItemName(para, textInput, cards, key, token) {
+  $(textInput).on("keyup change", async event => {
+    if (event.which === 13) {
+      const value = textInput.val();
+      if (value !== "") {
+        const updateStatus = await updateNameThroughApi(
+          value,
+          para,
+          cards,
+          key,
+          token,
+          textInput
+        );
       }
     }
   });
@@ -290,7 +296,15 @@ function addTextboxListener(cards, key, token) {
       .children(".item-name-textarea")
       .focus();
     $(event.currentTarget).addClass("addHidden");
-    updateItemName(event.currentTarget, textareaInput, cards, key, token);
+
+    $(textarea)
+      .children(".item-name-textarea")
+      .on("keypress", e => {
+        if (e.keyCode === 13) {
+          console.log("LOl");
+          updateItemName(event.currentTarget, textareaInput, cards, key, token);
+        }
+      });
     // When textbox Loses Focus
     $(textarea).focusout(() => {
       $(textarea).addClass("addHidden");
@@ -325,7 +339,6 @@ async function init() {
     const checkItemNames = await getCheckItemNames(checklistIds, key, token);
     addCheckItem(cards, key, token);
     createCheckListNames(checkItemNames, cards, key, token);
-    addTextboxListener(cards, key, token);
   } catch (err) {
     alert(err);
   }
