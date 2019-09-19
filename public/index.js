@@ -109,47 +109,6 @@ function checkOrUncheckThroughApi(currentItem, cardsInfo, key, token) {
   });
 }
 
-// function checkThroughApi(currentItem, cardsInfo, key, token) {
-//   currentItem.parents("li").data("state", "complete");
-//   const checklistData = currentItem.parents("li").data();
-
-//   cardsInfo.forEach(eachCard => {
-//     if (eachCard.idChecklists.includes(checklistData.checklistId)) {
-//       fetch(
-//         `https://api.trello.com/1/cards/${eachCard.id}/checkItem/${checklistData.id}?key=${key}&token=${token}&state=${checklistData.state}`,
-//         {
-//           method: "PUT"
-//         }
-//       ).catch(error => console.error("Error:", error));
-//     }
-//   });
-// }
-
-// function uncheckThroughApi(currentItem, cardsInfo, key, token) {
-//   currentItem.parents("li").data("state", "incomplete");
-//   const checklistData = currentItem.parents("li").data();
-//   cardsInfo.forEach(async eachCard => {
-//     if (eachCard.idChecklists.includes(checklistData.checklistId)) {
-//       try {
-//         fetch(
-//           `https://api.trello.com/1/cards/${eachCard.id}/checkItem/${checklistData.id}?key=${key}&token=${token}&state=${checklistData.state}`,
-//           {
-//             method: "PUT"
-//           }
-//         );
-//         currentItem
-//           .parents(".collection-item")
-//           .find(".item-name")
-//           .css("text-decoration", "none");
-//       } catch (err) {
-//         alert("Failed to do the operation, please retry!!");
-//         currentItem.prop("checked", true);
-//         return err;
-//       }
-//     }
-//   });
-// }
-
 function addCheckboxListener(cardsInfo, key, token) {
   $('.collection input[type="checkbox"]').click(function() {
     try {
