@@ -96,16 +96,8 @@ function checkOrUncheckThroughApi(currentItem, cardsInfo, key, token) {
         alert("Failed to do the operation. Please check if you are online.");
         if (currentItem.is(":checked")) {
           currentItem.prop("checked", false);
-          currentItem
-            .parents(".collection-item")
-            .find(".item-name")
-            .toggleClass("strike");
         } else {
           currentItem.prop("checked", true);
-          currentItem
-            .parents(".collection-item")
-            .find(".item-name")
-            .toggleClass("strike");
         }
         return err;
       }
