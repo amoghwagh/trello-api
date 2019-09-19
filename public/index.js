@@ -92,16 +92,20 @@ function checkOrUncheckThroughApi(currentItem, cardsInfo, key, token) {
             method: "PUT"
           }
         );
-        currentItem
-          .parents(".collection-item")
-          .find(".item-name")
-          .toggleClass("strike");
       } catch (err) {
-        alert("Failed to do the operation, please check if you are online!!");
+        alert("Failed to do the operation. Please check if you are online.");
         if (currentItem.is(":checked")) {
           currentItem.prop("checked", false);
+          currentItem
+            .parents(".collection-item")
+            .find(".item-name")
+            .toggleClass("strike");
         } else {
           currentItem.prop("checked", true);
+          currentItem
+            .parents(".collection-item")
+            .find(".item-name")
+            .toggleClass("strike");
         }
         return err;
       }
@@ -113,6 +117,10 @@ function addCheckboxListener(cardsInfo, key, token) {
   $('.collection input[type="checkbox"]').click(function() {
     try {
       checkOrUncheckThroughApi($(this), cardsInfo, key, token);
+      $(this)
+        .parents(".collection-item")
+        .find(".item-name")
+        .toggleClass("strike");
     } catch (err) {
       return err;
     }
@@ -134,7 +142,7 @@ async function removeItemThroughApi(currentElement, key, token) {
       .parent()
       .remove();
   } catch (error) {
-    alert("Failed to do the operation, please check if you are online");
+    alert("Failed to do the operation. Please check if you are online.");
     return error;
   }
 }
@@ -145,33 +153,35 @@ function addRemoveListener(key, token) {
   });
 }
 
-function createCollectionItem(items) {
-  $(".collection").append(
-    `<li class="collection-item hoverable red accent-3"><p><label><input type="checkbox" class="filled-in checkbox-blue-grey"/><span>
-    </span><div class="textarea-section inline" style="display:none" >
-    <input type="materialize-textarea" class="item-name-textarea"/>
-    </div><p class="item-name">${items.name}</p></label></p><a class="btn-floating btn-small waves-effect waves-light blue darken-4"><i class="material-icons">clear</i></a></li>`
-  );
+function createCollectionItem(item) {
+  let htmlString = `<li class="collection-item hoverable red accent-3"><p><label><input type="checkbox" class="filled-in checkbox-blue-grey"/><span>
+  </span><div class="textarea-section inline" style="display:none" >
+  <input type="materialize-textarea" class="item-name-textarea"/>
+  </div><p class="item-name">${item.name}</p></label></p><a class="btn-floating btn-small waves-effect waves-light blue darken-4"><i class="material-icons">clear</i></a></li>`;
 
-  if (items.state == "complete") {
+  let collectionItem = $.parseHTML(htmlString);
+
+  $(".collection").append(collectionItem);
+
+  if (item.state == "complete") {
     $('.collection input[type="checkbox"]')
       .last()
       .prop("checked", true);
     $(".collection .item-name")
       .last()
-      .css("text-decoration", "line-through");
+      .toggleClass("strike");
   }
 
   $(".collection li")
     .last()
-    .data("id", items.id);
+    .data("id", item.id);
 
   $(".collection li")
     .last()
-    .data("checklist-id", items.checklistId);
+    .data("checklist-id", item.checklistId);
   $(".collection li")
     .last()
-    .data("state", items.state);
+    .data("state", item.state);
 }
 
 function createNewItemThroughApi(newItemObj, key, token) {
