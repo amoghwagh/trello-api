@@ -86,7 +86,7 @@ function checkOrUncheckThroughApi(currentItem, cardsInfo, key, token) {
   cardsInfo.forEach(async eachCard => {
     if (eachCard.idChecklists.includes(checklistData.checklistId)) {
       try {
-        const fetchCall = await fetch(
+        await fetch(
           `https://api.trello.com/1/cards/${eachCard.id}/checkItem/${checklistData.id}?key=${key}&token=${token}&state=${checklistData.state}`,
           {
             method: "PUT"
@@ -97,7 +97,7 @@ function checkOrUncheckThroughApi(currentItem, cardsInfo, key, token) {
           .find(".item-name")
           .toggleClass("strike");
       } catch (err) {
-        alert("Failed to do the operation, please retry!!");
+        alert("Failed to do the operation, please check if you are online!!");
         if (currentItem.is(":checked")) {
           currentItem.prop("checked", false);
         } else {
@@ -119,27 +119,29 @@ function addCheckboxListener(cardsInfo, key, token) {
   });
 }
 
-function removeItemThroughApi(currentElement, key, token) {
-  const checklistId = $(currentElement)
+async function removeItemThroughApi(currentElement, key, token) {
+  const checklistData = $(currentElement)
     .parents("li")
-    .data("checklist-id");
-  const checkItemId = $(currentElement)
-    .parents("li")
-    .data("id");
-  fetch(
-    `https://api.trello.com/1/checklists/${checklistId}/checkItems/${checkItemId}?key=${key}&token=${token}`,
-    {
-      method: "DELETE"
-    }
-  ).catch(error => console.error("Error:", error));
+    .data();
+  try {
+    await fetch(
+      `https://api.trello.com/1/checklists/${checklistData.checklistId}/checkItems/${checklistData.id}?key=${key}&token=${token}`,
+      {
+        method: "DELETE"
+      }
+    );
+    $(currentElement)
+      .parent()
+      .remove();
+  } catch (error) {
+    alert("Failed to do the operation, please check if you are online");
+    return error;
+  }
 }
 
 function addRemoveListener(key, token) {
   $(".collection .btn-floating").on("click", event => {
     removeItemThroughApi(event.currentTarget, key, token);
-    $(event.currentTarget)
-      .parent()
-      .remove();
   });
 }
 
