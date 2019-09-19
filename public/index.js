@@ -156,24 +156,18 @@ function createCollectionItem(item) {
   $(".collection").append(collectionItem);
 
   if (item.state == "complete") {
-    $('.collection input[type="checkbox"]')
-      .last()
+    $(collectionItem)
+      .find('input[type="checkbox"]')
       .prop("checked", true);
-    $(".collection .item-name")
-      .last()
+    $(collectionItem)
+      .find(".item-name")
+      .prop("checked", true)
       .toggleClass("strike");
   }
 
-  $(".collection li")
-    .last()
-    .data("id", item.id);
-
-  $(".collection li")
-    .last()
-    .data("checklist-id", item.checklistId);
-  $(".collection li")
-    .last()
-    .data("state", item.state);
+  $(collectionItem).data("id", item.id);
+  $(collectionItem).data("checklist-id", item.checklistId);
+  $(collectionItem).data("state", item.state);
 }
 
 function createNewItemThroughApi(newItemObj, key, token) {
