@@ -233,7 +233,8 @@ function addCheckItem(cards, key, token) {
 
 function updateParaName(para, value) {
   $(para).text(value);
-  $(para).toggleClass("addInline");
+  $(para).addClass("addInline");
+  $(para).removeClass("addHidden");
 }
 
 function updateNameThroughApi(value, para, cardsInfo, key, token) {
@@ -266,7 +267,10 @@ function updateItemName(para, textInput, cards, key, token) {
         updateNameThroughApi(value, para, cards, key, token);
         $(textInput)
           .parent()
-          .css("display", "none");
+          .addClass("addHidden");
+        $(textInput)
+          .parent()
+          .removeClass("addInline");
       }
     }
   });
