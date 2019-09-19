@@ -58,7 +58,7 @@ function getCheckItems(itemsArray) {
 
 async function getCheckItemNames(checklists, key, token) {
   try {
-    const checkItemPromises = checklists.map(checklist => {
+    const checkItemPromises = checklists.map(async checklist => {
       const fetchCall = await fetch(
         `https://api.trello.com/1/checklists/${checklist}?key=${key}&token=${token}`
       );
@@ -69,54 +69,93 @@ async function getCheckItemNames(checklists, key, token) {
     const checkItemNamesObj = await getCheckItems(checkItemData.flat());
     return checkItemNamesObj;
   } catch (err) {
-    console.log("Failed to retrieve check items");
+    alert("Failed to retrieve check items");
+    return err;
   }
 }
 
-function checkThroughApi(currentItem, cardsInfo, key, token) {
-  const checklistId = currentItem.parents("li").data("checklist-id");
-  const checkItemId = currentItem.parents("li").data("id");
-  cardsInfo.forEach(eachCard => {
-    if (eachCard.idChecklists.includes(checklistId)) {
-      fetch(
-        `https://api.trello.com/1/cards/${eachCard.id}/checkItem/${checkItemId}?key=${key}&token=${token}&state=complete`,
-        {
-          method: "PUT"
+function checkOrUncheckThroughApi(currentItem, cardsInfo, key, token) {
+  const checklistData = currentItem.parents("li").data();
+
+  if (checklistData.state === "incomplete") {
+    currentItem.parents("li").data("state", "complete");
+  } else {
+    currentItem.parents("li").data("state", "incomplete");
+  }
+
+  cardsInfo.forEach(async eachCard => {
+    if (eachCard.idChecklists.includes(checklistData.checklistId)) {
+      try {
+        const fetchCall = await fetch(
+          `https://api.trello.com/1/cards/${eachCard.id}/checkItem/${checklistData.id}?key=${key}&token=${token}&state=${checklistData.state}`,
+          {
+            method: "PUT"
+          }
+        );
+        currentItem
+          .parents(".collection-item")
+          .find(".item-name")
+          .toggleClass("strike");
+      } catch (err) {
+        alert("Failed to do the operation, please retry!!");
+        if (currentItem.is(":checked")) {
+          currentItem.prop("checked", false);
+        } else {
+          currentItem.prop("checked", true);
         }
-      ).catch(error => console.error("Error:", error));
+        return err;
+      }
     }
   });
 }
 
-function uncheckThroughApi(currentItem, cardsInfo, key, token) {
-  const checklistId = currentItem.parents("li").data("checklist-id");
-  const checkItemId = currentItem.parents("li").data("id");
-  cardsInfo.forEach(eachCard => {
-    if (eachCard.idChecklists.includes(checklistId)) {
-      fetch(
-        `https://api.trello.com/1/cards/${eachCard.id}/checkItem/${checkItemId}?key=${key}&token=${token}&state=incomplete`,
-        {
-          method: "PUT"
-        }
-      ).catch(error => console.error("Error:", error));
-    }
-  });
-}
+// function checkThroughApi(currentItem, cardsInfo, key, token) {
+//   currentItem.parents("li").data("state", "complete");
+//   const checklistData = currentItem.parents("li").data();
+
+//   cardsInfo.forEach(eachCard => {
+//     if (eachCard.idChecklists.includes(checklistData.checklistId)) {
+//       fetch(
+//         `https://api.trello.com/1/cards/${eachCard.id}/checkItem/${checklistData.id}?key=${key}&token=${token}&state=${checklistData.state}`,
+//         {
+//           method: "PUT"
+//         }
+//       ).catch(error => console.error("Error:", error));
+//     }
+//   });
+// }
+
+// function uncheckThroughApi(currentItem, cardsInfo, key, token) {
+//   currentItem.parents("li").data("state", "incomplete");
+//   const checklistData = currentItem.parents("li").data();
+//   cardsInfo.forEach(async eachCard => {
+//     if (eachCard.idChecklists.includes(checklistData.checklistId)) {
+//       try {
+//         fetch(
+//           `https://api.trello.com/1/cards/${eachCard.id}/checkItem/${checklistData.id}?key=${key}&token=${token}&state=${checklistData.state}`,
+//           {
+//             method: "PUT"
+//           }
+//         );
+//         currentItem
+//           .parents(".collection-item")
+//           .find(".item-name")
+//           .css("text-decoration", "none");
+//       } catch (err) {
+//         alert("Failed to do the operation, please retry!!");
+//         currentItem.prop("checked", true);
+//         return err;
+//       }
+//     }
+//   });
+// }
 
 function addCheckboxListener(cardsInfo, key, token) {
   $('.collection input[type="checkbox"]').click(function() {
-    if ($(this).is(":checked")) {
-      $(this)
-        .parents(".collection-item")
-        .find(".item-name")
-        .css("text-decoration", "line-through");
-      checkThroughApi($(this), cardsInfo, key, token);
-    } else if ($(this).is(":not(:checked)")) {
-      $(this)
-        .parents(".collection-item")
-        .find(".item-name")
-        .css("text-decoration", "none");
-      uncheckThroughApi($(this), cardsInfo, key, token);
+    try {
+      checkOrUncheckThroughApi($(this), cardsInfo, key, token);
+    } catch (err) {
+      return err;
     }
   });
 }
@@ -169,6 +208,9 @@ function createCollectionItem(items) {
   $(".collection li")
     .last()
     .data("checklist-id", items.checklistId);
+  $(".collection li")
+    .last()
+    .data("state", items.state);
 }
 
 function createNewItemThroughApi(newItemObj, key, token) {
@@ -292,7 +334,7 @@ function createCheckListNames(list, card, key, token) {
   addTextboxListener(card, key, token);
 }
 
-async function getEverything() {
+async function init() {
   const key = "4a0d830d67c1acd2c6e927bc368469e9";
   const token =
     "d8295327e9764268b9e8fbb0ffe5b41518a24923f873c859ef2fa0756ebe2935";
@@ -311,4 +353,4 @@ async function getEverything() {
   }
 }
 
-getEverything();
+init();

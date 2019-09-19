@@ -82,3 +82,7 @@ nav {
 #item-name-textbox {
   display: inline;
 }
+
+.strike {
+  text-decoration: line-through;
+}
