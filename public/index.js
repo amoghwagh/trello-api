@@ -233,20 +233,17 @@ function addCheckItem(cards, key, token) {
 
 function updateParaName(para, value) {
   $(para).text(value);
-  $(para).css("display", "inline");
+  $(para).toggleClass("addInline");
 }
 
 function updateNameThroughApi(value, para, cardsInfo, key, token) {
-  const checklistId = $(para)
+  const checklistData = $(para)
     .parents("li")
-    .data("checklist-id");
-  const checkItemId = $(para)
-    .parents("li")
-    .data("id");
+    .data();
   cardsInfo.forEach(eachCard => {
-    if (eachCard.idChecklists.includes(checklistId)) {
+    if (eachCard.idChecklists.includes(checklistData.checklistId)) {
       fetch(
-        `https://api.trello.com/1/cards/${eachCard.id}/checkItem/${checkItemId}?key=${key}&token=${token}&name=${value}`,
+        `https://api.trello.com/1/cards/${eachCard.id}/checkItem/${checklistData.id}?key=${key}&token=${token}&name=${value}`,
         {
           method: "PUT"
         }

@@ -86,3 +86,7 @@ nav {
 .strike {
   text-decoration: line-through;
 }
+
+.addInline {
+  display: inline;
+}
