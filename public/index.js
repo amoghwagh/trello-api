@@ -70,7 +70,7 @@ async function getCheckItemNames(checklists, key, token) {
     return checkItemNamesObj;
   } catch (err) {
     alert("Failed to retrieve check items");
-    return err;
+    console.log(err);
   }
 }
 
@@ -107,7 +107,7 @@ function checkOrUncheckThroughApi(currentItem, cardsInfo, key, token) {
             .find(".item-name")
             .toggleClass("strike");
         }
-        return err;
+        console.log(err);
       }
     }
   });
@@ -122,7 +122,7 @@ function addCheckboxListener(cardsInfo, key, token) {
         .find(".item-name")
         .toggleClass("strike");
     } catch (err) {
-      return err;
+      console.log(err);
     }
   });
 }
@@ -143,7 +143,7 @@ async function removeItemThroughApi(currentElement, key, token) {
       .remove();
   } catch (error) {
     alert("Failed to do the operation. Please check if you are online.");
-    return error;
+    console.log(error);
   }
 }
 
@@ -212,7 +212,7 @@ async function createNewItem(card, newItem, key, token) {
       addTextboxListener(card, key, token);
     } else throw err;
   } catch (err) {
-    return err;
+    console.log(err);
   }
 }
 
@@ -267,6 +267,8 @@ function updateNameThroughApi(value, para, cardsInfo, key, token, textInput) {
           .removeClass("addInline");
       } catch (error) {
         alert("Failed to do the operation. Please check if you are online.");
+        console.log(error);
+        throw error;
       }
     }
   });
@@ -295,7 +297,7 @@ function addTextboxListener(cards, key, token) {
     const textarea = $(event.currentTarget).siblings(".textarea-section");
     const textareaInput = $(textarea).children(".item-name-textarea");
 
-    $(textarea).removeClass("addHidden");
+    $(textarea).toggleClass("addHidden");
     $(textarea).addClass("addInline");
     $(textarea)
       .children(".item-name-textarea")
